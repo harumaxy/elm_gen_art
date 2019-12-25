@@ -9,6 +9,7 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.PROJECT_ID }}
       APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+      PUBLIC_URL: "./"
 
     steps:
       - name: checkout src
