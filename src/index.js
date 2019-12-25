@@ -1,9 +1,10 @@
-import './main.css';
-import { Elm } from './Main.elm';
-import * as serviceWorker from './serviceWorker';
+import "./main.css";
+import { Elm } from "./Main.elm";
+import * as serviceWorker from "./serviceWorker";
+import "elm-canvas";
 
 Elm.Main.init({
-  node: document.getElementById('root')
+  node: document.getElementById("root")
 });
 
 // If you want your app to work offline and load faster, you can change

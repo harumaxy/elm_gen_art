@@ -5,7 +5,9 @@
   "directories": {
     "test": "tests"
   },
-  "dependencies": {},
+  "dependencies": {
+    "elm-canvas": "^2.2.3"
+  },
   "devDependencies": {
     "create-elm-app": "^4.1.2",
     "elm": "^0.19.1-3"
