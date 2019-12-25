@@ -9,7 +9,6 @@ jobs:
     env:
       PROJECT_ID: ${{ secrets.PROJECT_ID }}
       APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      PUBLIC_URL: ./
 
     steps:
       - name: checkout src
@@ -30,6 +29,8 @@ jobs:
 
       - run: npm install
       - run: npx elm-app build
+        env:
+          PUBLIC_URL: "./"
 
       - name: deploy with gcloud
         uses: actions-hub/gcloud@master
