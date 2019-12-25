@@ -27,7 +27,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - run: npm install create-elm-app
+      - run: npm install
       - run: npx elm-app build
 
       - name: deploy with gcloud

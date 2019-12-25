@@ -2,7 +2,6 @@
   "name": "elm_gen_art",
   "version": "1.0.0",
   "description": "canvasを使用する。",
-  "main": "index.js",
   "directories": {
     "test": "tests"
   },
@@ -10,17 +9,14 @@
   "devDependencies": {
     "create-elm-app": "^4.1.2"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/harumaxy/elm_gen_art.git"
   },
-  "author": "",
+  "author": "harumaxy",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/harumaxy/elm_gen_art/issues"
   },
-  "homepage": "https://github.com/harumaxy/elm_gen_art#readme"
+  "homepage": "."
 }
