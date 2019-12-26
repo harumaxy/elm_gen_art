@@ -59,7 +59,7 @@ view model =
         ([ background w h
          , shapes [ fill Color.red ] [ circle ( 0, 0 ) 100 ]
          ]
-            ++ List.map rippleItem model
+            ++ List.map renderRipples model
         )
 
 
@@ -68,6 +68,6 @@ background w h =
         [ rect ( 0, 0 ) w h ]
 
 
-rippleItem : Ripple -> Renderable
-rippleItem item =
+renderRipples : Ripple -> Renderable
+renderRipples item =
     shapes [ fill (Color.rgba 1 1 1 (1 - item.r / item.maxr)) ] [ circle item.pos item.r ]
