@@ -7,6 +7,9 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Lazy as Lazy exposing (..)
+import Lib.Branch exposing (..)
+import Lib.Fractals exposing (..)
+import Lib.RecursiveLine exposing (..)
 import Lib.Ripple as Ripple
 import Material.Drawer as Drawer exposing (..)
 import Material.IconButton as IB exposing (iconButtonConfig)
@@ -119,30 +122,23 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if model.isDrawerOpen then
-        Sub.none
+    if model.url.path == "/ripple" then
+        Browser.Events.onAnimationFrameDelta UpdateFrame
 
     else
-        Browser.Events.onAnimationFrameDelta UpdateFrame
+        Sub.none
 
 
 view : Model -> Browser.Document Msg
 view model =
-    let
-        mainContent =
-            routes model
-    in
     { title = model.url.path
     , body =
         [ appBar model
         , drawer model.isDrawerOpen
-            [ div
-                [ style "padding-top" "128px" ]
-                [ text "New Application" ]
-            ]
+            [ div [ style "padding-top" "128px" ] [] ]
         , h1 [] [ text (Url.toString model.url) ]
         , h1 [] [ text ("update per millisec" ++ String.fromFloat model.dt) ]
-        , mainContent
+        , routes model
         ]
     }
 
@@ -175,8 +171,14 @@ routes model =
         "/ripple" ->
             Html.map RMsg (Ripple.view model.ripples)
 
-        "/world" ->
-            h1 [] [ text "world" ]
+        "/fractals" ->
+            Lib.Fractals.view
+
+        "/recursiveLine" ->
+            Lib.RecursiveLine.view
+
+        "/recursiveBranch" ->
+            Lib.Branch.view
 
         _ ->
             h1 [] [ text "Nothing" ]
@@ -201,5 +203,7 @@ drawerList : Html Msg
 drawerList =
     Material.List.list listConfig
         [ listItem { listItemConfig | href = Just "/ripple", onClick = Just DrawerClosed } [ text "Ripple" ]
-        , listItem { listItemConfig | href = Just "/world", onClick = Just DrawerClosed } [ text "world" ]
+        , listItem { listItemConfig | href = Just "/fractals", onClick = Just DrawerClosed } [ text "Fractals" ]
+        , listItem { listItemConfig | href = Just "/recursiveLine", onClick = Just DrawerClosed } [ text "RecursiveLine" ]
+        , listItem { listItemConfig | href = Just "/recursiveBranch", onClick = Just DrawerClosed } [ text "RecursiveBranch" ]
         ]
