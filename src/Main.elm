@@ -166,7 +166,7 @@ drawer isOpen mainContent =
     div []
         [ dismissibleDrawer
             { dismissibleDrawerConfig
-                | open = Debug.log "isOpen" isOpen
+                | open = isOpen
                 , onClose = Nothing
                 , additionalAttributes = []
             }
