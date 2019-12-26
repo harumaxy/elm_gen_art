@@ -6,7 +6,8 @@
     "test": "tests"
   },
   "dependencies": {
-    "elm-canvas": "^2.2.3"
+    "elm-canvas": "^2.2.3",
+    "material-components-web-elm": "^2.0.1"
   },
   "devDependencies": {
     "create-elm-app": "^4.1.2",
