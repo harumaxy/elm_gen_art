@@ -2,6 +2,8 @@ import "./main.css";
 import { Elm } from "./Main.elm";
 import * as serviceWorker from "./serviceWorker";
 import "elm-canvas";
+import "material-components-web-elm/dist/material-components-web-elm.min.js"
+import "material-components-web-elm/dist/material-components-web-elm.min.css"
 
 Elm.Main.init({
   node: document.getElementById("root")
