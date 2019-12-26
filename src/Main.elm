@@ -4,8 +4,17 @@ import Browser
 import Browser.Events
 import Browser.Navigation as Nav
 import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Html.Lazy as Lazy exposing (..)
 import Lib.Ripple as Ripple
+import Material.Drawer as Drawer exposing (..)
+import Material.IconButton as IB exposing (iconButtonConfig)
+import Material.List exposing (..)
+import Material.TopAppBar as TAB exposing (topAppBarConfig)
+import Maybe.Extra exposing (..)
 import Random exposing (..)
+import Task exposing (..)
 import Url
 
 
@@ -26,6 +35,7 @@ type alias Model =
     , url : Url.Url
     , time : Float
     , dt : Float
+    , isDrawerOpen : Bool
 
     -- Ripple
     , ripples : List Ripple.Ripple
@@ -40,6 +50,8 @@ type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
     | UpdateFrame Float
+    | DrawerClosed
+    | DrawerOpend
     | RMsg Ripple.Msg
     | CreateRipple ( Float, Float ) Float
 
@@ -51,6 +63,7 @@ init flags url key =
         url
         0
         0
+        False
         []
     , Cmd.none
     )
@@ -73,8 +86,19 @@ update msg model =
             , Cmd.none
             )
 
+        DrawerClosed ->
+            ( { model | isDrawerOpen = False }, Cmd.none )
+
+        DrawerOpend ->
+            ( { model | isDrawerOpen = True }, Cmd.none )
+
         UpdateFrame dt ->
-            ( { model | dt = dt, ripples = Ripple.update model.ripples dt }, Cmd.none )
+            ( { model
+                | dt = dt
+                , ripples = Ripple.update model.ripples dt
+              }
+            , Cmd.none
+            )
 
         -- Ripple
         RMsg rmsg ->
@@ -95,16 +119,66 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Browser.Events.onAnimationFrameDelta UpdateFrame
+    if model.isDrawerOpen then
+        Sub.none
+
+    else
+        Browser.Events.onAnimationFrameDelta UpdateFrame
 
 
 view : Model -> Browser.Document Msg
 view model =
     { title = "Application Title"
     , body =
-        [ div [] [ text "New Application" ]
-        , h1 [] [ text (Url.toString model.url) ]
-        , h1 [] [ text ("update per millisec" ++ String.fromFloat model.dt) ]
-        , Html.map RMsg (Ripple.view model.ripples)
+        [ appBar model
+        , drawer model.isDrawerOpen
+            [ div
+                [ style "padding-top" "128px" ]
+                [ text "New Application" ]
+            , h1 [] [ text (Url.toString model.url) ]
+            , h1 [] [ text ("update per millisec" ++ String.fromFloat model.dt) ]
+            , Html.map RMsg (Ripple.view model.ripples)
+            ]
         ]
     }
+
+
+appBar : Model -> Html Msg
+appBar model =
+    TAB.topAppBar { topAppBarConfig | fixed = True }
+        [ TAB.row []
+            [ TAB.section [ TAB.alignStart ]
+                [ IB.iconButton
+                    { iconButtonConfig
+                        | onClick = Just DrawerOpend
+                        , additionalAttributes =
+                            [ TAB.navigationIcon ]
+                    }
+                    "menu"
+                , span [ TAB.title ] [ text "title" ]
+                ]
+            ]
+        ]
+
+
+drawer : Bool -> List (Html Msg) -> Html Msg
+drawer isOpen mainContent =
+    div []
+        [ dismissibleDrawer
+            { dismissibleDrawerConfig
+                | open = Debug.log "isOpen" isOpen
+                , onClose = Nothing
+                , additionalAttributes = []
+            }
+            [ drawerContent [] [ drawerList ] ]
+        , drawerScrim [ onClick DrawerClosed ] []
+        , div [] mainContent
+        ]
+
+
+drawerList : Html Msg
+drawerList =
+    Material.List.list listConfig
+        [ listItem { listItemConfig | href = Just "/hello", onClick = Just DrawerClosed } [ text "hello" ]
+        , listItem { listItemConfig | href = Just "/world", onClick = Just DrawerClosed } [ text "world" ]
+        ]
