@@ -55,7 +55,7 @@ view model =
             1000
     in
     Canvas.toHtml ( w, h )
-        [ Mouse.onDown (\event -> Debug.log "clicked!" (ClickedAt event.offsetPos)) ]
+        [ Mouse.onDown (\event -> ClickedAt event.offsetPos) ]
         ([ background w h
          , shapes [ fill Color.red ] [ circle ( 0, 0 ) 100 ]
          ]
