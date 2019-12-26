@@ -128,24 +128,28 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Application Title"
+    let
+        mainContent =
+            routes model
+    in
+    { title = model.url.path
     , body =
         [ appBar model
         , drawer model.isDrawerOpen
             [ div
                 [ style "padding-top" "128px" ]
                 [ text "New Application" ]
-            , h1 [] [ text (Url.toString model.url) ]
-            , h1 [] [ text ("update per millisec" ++ String.fromFloat model.dt) ]
-            , Html.map RMsg (Ripple.view model.ripples)
             ]
+        , h1 [] [ text (Url.toString model.url) ]
+        , h1 [] [ text ("update per millisec" ++ String.fromFloat model.dt) ]
+        , mainContent
         ]
     }
 
 
 appBar : Model -> Html Msg
 appBar model =
-    TAB.topAppBar { topAppBarConfig | fixed = True }
+    TAB.topAppBar { topAppBarConfig | fixed = False }
         [ TAB.row []
             [ TAB.section [ TAB.alignStart ]
                 [ IB.iconButton
@@ -159,6 +163,23 @@ appBar model =
                 ]
             ]
         ]
+
+
+
+-- Routing
+
+
+routes : Model -> Html Msg
+routes model =
+    case model.url.path of
+        "/ripple" ->
+            Html.map RMsg (Ripple.view model.ripples)
+
+        "/world" ->
+            h1 [] [ text "world" ]
+
+        _ ->
+            h1 [] [ text "Nothing" ]
 
 
 drawer : Bool -> List (Html Msg) -> Html Msg
@@ -179,6 +200,6 @@ drawer isOpen mainContent =
 drawerList : Html Msg
 drawerList =
     Material.List.list listConfig
-        [ listItem { listItemConfig | href = Just "/hello", onClick = Just DrawerClosed } [ text "hello" ]
+        [ listItem { listItemConfig | href = Just "/ripple", onClick = Just DrawerClosed } [ text "Ripple" ]
         , listItem { listItemConfig | href = Just "/world", onClick = Just DrawerClosed } [ text "world" ]
         ]
