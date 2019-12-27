@@ -18,7 +18,8 @@
             "elm-explorations/linear-algebra": "1.0.3",
             "joakin/elm-canvas": "4.0.1",
             "justgook/alt-linear-algebra": "1.0.0",
-            "mpizenberg/elm-pointer-events": "4.0.1"
+            "mpizenberg/elm-pointer-events": "4.0.1",
+            "myrho/elm-round": "1.0.4"
         },
         "indirect": {
             "elm/bytes": "1.0.8",
