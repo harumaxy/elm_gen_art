@@ -7,7 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Lazy as Lazy exposing (..)
-import Lib.Branch exposing (..)
+import Lib.Branch as Branch exposing (..)
 import Lib.Fractals exposing (..)
 import Lib.RecursiveLine exposing (..)
 import Lib.Ripple as Ripple
@@ -42,7 +42,24 @@ type alias Model =
 
     -- Ripple
     , ripples : List Ripple.Ripple
+
+    -- Branch
+    , branch : Branch.Model
     }
+
+
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
+    ( Model
+        key
+        url
+        0
+        0
+        False
+        []
+        Branch.init
+    , Cmd.none
+    )
 
 
 
@@ -57,19 +74,7 @@ type Msg
     | DrawerOpend
     | RMsg Ripple.Msg
     | CreateRipple ( Float, Float ) Float
-
-
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( Model
-        key
-        url
-        0
-        0
-        False
-        []
-    , Cmd.none
-    )
+    | BMsg Branch.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -118,6 +123,10 @@ update msg model =
 
         CreateRipple pos r ->
             ( { model | ripples = Ripple.Ripple pos 0 r :: model.ripples }, Cmd.none )
+
+        -- Branch
+        BMsg bmsg ->
+            ( { model | branch = Branch.update bmsg model.branch }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -178,7 +187,7 @@ routes model =
             Lib.RecursiveLine.view
 
         "/recursiveBranch" ->
-            Lib.Branch.view
+            Html.map BMsg (Branch.view model.branch)
 
         _ ->
             h1 [] [ text "Nothing" ]
