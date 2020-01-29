@@ -69,20 +69,14 @@ view model =
     in
     div []
         [ h2 [] [ Html.text "スライダーにフォーカスして ← / → キーで1目盛りずつ動かせます" ]
-        , div [ style "width" "50%", style "margin" "auto", style "display" "flex", style "flex-wrap" "wrap" ]
-            [ div [ id "LeftBranchController", style "display" "flex", style "flex-direction" "column", style "flex" "1" ]
-                [ p [] [ Html.text "Left branch" ]
-                , makeSlider ("角度: " ++ Round.round 2 model.left_degrees) 0 90 1 model.left_degrees (Just LeftDegrees)
-                , makeSlider ("減衰係数: " ++ Round.round 2 model.left_decay) 0 0.7 0.01 model.left_decay (Just LeftDecay)
-                ]
-            , div [ id "RightBranchController", style "display" "flex", style "flex-direction" "column", style "flex" "1" ]
-                [ h2 [] [ Html.text "Right branch" ]
-                , makeSlider ("角度: " ++ Round.round 2 model.right_degrees) 0 90 1 model.right_degrees (Just RightDegrees)
-                , makeSlider ("減衰係数: " ++ Round.round 2 model.right_decay) 0 0.7 0.01 model.right_decay (Just RightDecay)
+        , div [ style "width" "100%", style "margin" "auto", style "display" "flex", style "flex-wrap" "wrap" ]
+            [ div [ id "LeftBranchController", style "display" "flex", style "flex-direction" "row", style "flex" "1" ]
+                [ makeSlider ("Left deg: " ++ Round.round 2 model.right_degrees) 0 90 1 model.right_degrees (Just RightDegrees)
+                , makeSlider ("shortening: " ++ Round.round 2 model.right_decay) 0 0.7 0.01 model.right_decay (Just RightDecay)
+                , makeSlider ("Right deg: " ++ Round.round 2 model.left_degrees) 0 90 1 model.left_degrees (Just LeftDegrees)
+                , makeSlider ("shotening: " ++ Round.round 2 model.left_decay) 0 0.7 0.01 model.left_decay (Just LeftDecay)
                 ]
             ]
-
-        -- , makeSlider 0 10 1 5 Nothing
         , Canvas.toHtml ( w, h )
             []
             [ background w h
