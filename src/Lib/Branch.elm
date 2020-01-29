@@ -1,7 +1,5 @@
 module Lib.Branch exposing (..)
 
-import AltMath.Alternative.ADT.Matrix4 exposing (..)
-import AltMath.Alternative.ADT.Vector2 exposing (..)
 import Canvas exposing (..)
 import Canvas.Settings exposing (..)
 import Canvas.Settings.Line as LineConf exposing (..)
@@ -73,7 +71,7 @@ view model =
         [ h2 [] [ Html.text "スライダーにフォーカスして ← / → キーで1目盛りずつ動かせます" ]
         , div [ style "width" "50%", style "margin" "auto", style "display" "flex", style "flex-wrap" "wrap" ]
             [ div [ id "LeftBranchController", style "display" "flex", style "flex-direction" "column", style "flex" "1" ]
-                [ h2 [] [ Html.text "Left branch" ]
+                [ p [] [ Html.text "Left branch" ]
                 , makeSlider ("角度: " ++ Round.round 2 model.left_degrees) 0 90 1 model.left_degrees (Just LeftDegrees)
                 , makeSlider ("減衰係数: " ++ Round.round 2 model.left_decay) 0 0.7 0.01 model.left_decay (Just LeftDecay)
                 ]

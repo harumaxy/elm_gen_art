@@ -1,27 +1,36 @@
 module Lib.RecursiveLine exposing (..)
 
+import Browser.Dom exposing (..)
 import Canvas exposing (..)
 import Canvas.Settings exposing (..)
 import Canvas.Settings.Line as LineConf exposing (..)
 import Color exposing (..)
+import Html exposing (..)
 
 
 
 -- View
 
 
-view =
+type alias Scene =
+    { width : Float
+    , height : Float
+    }
+
+
+view : Scene -> Html msg
+view scene =
     let
         w =
-            1000
+            scene.width
 
         h =
-            1000
+            scene.height
     in
-    Canvas.toHtml ( w, h )
+    Canvas.toHtml ( round w, round h )
         []
         [ background w h
-        , shapes [ stroke Color.red, LineConf.lineWidth 5 ] (recursiveLine (w / 2) (h / 2) 500)
+        , shapes [ stroke Color.red, LineConf.lineWidth 5 ] (recursiveLine (w / 2) (h / 2) 400)
         ]
 
 

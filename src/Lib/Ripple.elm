@@ -8,6 +8,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Events.Extra.Mouse as Mouse
+import Lib.Utils exposing (..)
 import List exposing (..)
 
 
@@ -46,21 +47,23 @@ update model dt =
 -- View
 
 
-view model =
+view : List Ripple -> Scene -> Html Msg
+view model scene =
     let
         w =
-            1000
+            scene.width
 
         h =
-            1000
+            scene.height
     in
-    Canvas.toHtml ( w, h )
-        [ Mouse.onDown (\event -> ClickedAt event.offsetPos) ]
-        ([ background w h
-         , shapes [ fill Color.red ] [ circle ( 0, 0 ) 100 ]
-         ]
-            ++ List.map renderRipples model
-        )
+    div []
+        [ h1 [] [ Html.text "下のエリアをクリックすると波紋が出ます" ]
+        , Canvas.toHtml ( round w, round h )
+            [ Mouse.onDown (\event -> ClickedAt event.offsetPos) ]
+            (background w h
+                :: List.map renderRipples model
+            )
+        ]
 
 
 background w h =

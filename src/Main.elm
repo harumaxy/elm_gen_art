@@ -1,6 +1,7 @@
 module Main exposing (Model, Msg, init, subscriptions, update, view)
 
 import Browser
+import Browser.Dom exposing (..)
 import Browser.Events
 import Browser.Navigation as Nav
 import Html exposing (..)
@@ -13,10 +14,12 @@ import Lib.RecursiveLine exposing (..)
 import Lib.Ripple as Ripple
 import Material.Drawer as Drawer exposing (..)
 import Material.IconButton as IB exposing (iconButtonConfig)
+import Material.LayoutGrid as Grid exposing (..)
 import Material.List exposing (..)
 import Material.TopAppBar as TAB exposing (topAppBarConfig)
 import Maybe.Extra exposing (..)
 import Random exposing (..)
+import String.Extra exposing (..)
 import Task exposing (..)
 import Url
 
@@ -33,12 +36,18 @@ main =
         }
 
 
+
+-- MODEL
+
+
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
+    , pageTitle : String
     , time : Float
     , dt : Float
     , isDrawerOpen : Bool
+    , viewport : Viewport
 
     -- Ripple
     , ripples : List Ripple.Ripple
@@ -53,12 +62,23 @@ init flags url key =
     ( Model
         key
         url
+        "Home"
         0
         0
         False
+        (Viewport
+            { width = 0
+            , height = 0
+            }
+            { x = 0
+            , y = 0
+            , width = 0
+            , height = 0
+            }
+        )
         []
         Branch.init
-    , Cmd.none
+    , Task.perform GetViewport Browser.Dom.getViewport
     )
 
 
@@ -67,7 +87,8 @@ init flags url key =
 
 
 type Msg
-    = UrlRequested Browser.UrlRequest
+    = GetViewport Viewport
+    | UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
     | UpdateFrame Float
     | DrawerClosed
@@ -81,6 +102,9 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         -- Main
+        GetViewport newViewport ->
+            ( { model | viewport = newViewport }, Cmd.none )
+
         UrlRequested urlRequest ->
             case urlRequest of
                 Browser.Internal url ->
@@ -90,7 +114,7 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | url = url }
+            ( { model | url = url, pageTitle = String.Extra.toTitleCase (String.dropLeft 1 url.path) }
             , Cmd.none
             )
 
@@ -140,14 +164,14 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = model.url.path
+    { title = model.pageTitle
     , body =
-        [ appBar model
-        , drawer model.isDrawerOpen
-            [ div [ style "padding-top" "128px" ] [] ]
-        , h1 [] [ text (Url.toString model.url) ]
-        , h1 [] [ text ("update per millisec" ++ String.fromFloat model.dt) ]
-        , routes model
+        [ Grid.layoutGrid [ style "margin" "0px", style "padding" "0px" ]
+            [ appBar model
+            , drawer model.isDrawerOpen
+                [ div [ style "padding-top" "128px" ] [] ]
+            , routes model
+            ]
         ]
     }
 
@@ -164,7 +188,7 @@ appBar model =
                             [ TAB.navigationIcon ]
                     }
                     "menu"
-                , span [ TAB.title ] [ text "title" ]
+                , span [ TAB.title ] [ text model.pageTitle ]
                 ]
             ]
         ]
@@ -178,19 +202,19 @@ routes : Model -> Html Msg
 routes model =
     case model.url.path of
         "/ripple" ->
-            Html.map RMsg (Ripple.view model.ripples)
+            Html.map RMsg (Ripple.view model.ripples model.viewport.scene)
 
         "/fractals" ->
             Lib.Fractals.view
 
         "/recursiveLine" ->
-            Lib.RecursiveLine.view
+            Lib.RecursiveLine.view model.viewport.scene
 
         "/recursiveBranch" ->
             Html.map BMsg (Branch.view model.branch)
 
         _ ->
-            h1 [] [ text "Nothing" ]
+            Html.map BMsg (Branch.view model.branch)
 
 
 drawer : Bool -> List (Html Msg) -> Html Msg

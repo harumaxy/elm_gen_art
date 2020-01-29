@@ -20,7 +20,6 @@ view =
     Canvas.toHtml ( w, h )
         []
         [ background w h
-        , shapes [ stroke Color.white ] [ circle ( w / 2, h / 2 ) 300 ]
         , shapes [ stroke Color.red ] (recursiveCircle (w / 2) (h / 2) 300)
         ]
 
@@ -36,6 +35,8 @@ recursiveCircle x y r =
         circle ( x, y ) r
             :: recursiveCircle (x + r) y (r / 2)
             ++ recursiveCircle (x - r) y (r / 2)
+            ++ recursiveCircle x (y + r) (r / 2)
+            ++ recursiveCircle x (y - r) (r / 2)
         -- ++ recursiveCircle (x - r) (y + r) (r / 2)
 
     else
